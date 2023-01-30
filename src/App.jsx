@@ -1,7 +1,8 @@
 import { lazy, useState, Suspense, useEffect, useRef } from "react";
-import { useFormik } from "formik";
 import ImprovedHeader from "./components/ImprovedHeader";
 import LazyLoadedImage from './components/LazyLoadedImage';
+import SectionArticle from './components/SectionArticle';
+import UltimateFooter from './components/NewFooter';
 
 /* Add SecNav to the actual header instead of under it
    Fix the spacing across all elements, perhaps assing a different file to hold different spacing variables
@@ -146,10 +147,6 @@ function App() {
                 scrollUp={scrollingUp}
                 count={scrollCount}
             />
-            {/*<HeaderComp state={state}>
-                <Navbar st={state} cb={handleClick} />
-            </HeaderComp>
-            <SecNav />*/}
             <FirstSection url={bgImageUrl} refToRef={bgDiv} />
             <SecondSection wh={windowHeightWidth} refOne={bgDivOne} refTwo={bgDivTwo}/>
             <ThirdSection />
@@ -167,60 +164,6 @@ function App() {
     );
 }
 
-function FormItem() {
-    return (
-        <ul className="my-5 lg:order-[-1]">
-            <li className="my-2">
-                <h4 className="text-sm font-semibold">
-                    Sign up to our newsletter
-                </h4>
-            </li>
-            <li className="my-2">
-                <p className="text-sm">
-                    Enter your email address to stay up to date with the latest
-                    offers, tutorials, downloads, surveys and more.
-                </p>
-            </li>
-            <li className="my-2">
-                <NewsLetterForm />
-            </li>
-        </ul>
-    );
-}
-
-function NewsLetterForm() {
-    const formik = useFormik({
-        initialValues: {
-            email: "",
-        },
-
-        onSubmit: (values) => {
-            alert(JSON.stringify(values, null, 2));
-        },
-    });
-
-    return (
-        <form onSubmit={formik.handleSubmit}>
-            <input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="Email Address"
-                onChange={formik.handleChange}
-                value={formik.values.email}
-                className="text-sm w-[250px] p-2 h-10 bg-slate-200"
-            />
-
-            <button
-                type="submit"
-                className="text-sm text-white bg-[#0000ff] h-10 w-[80px] font-bold"
-            >
-                Sign Up
-            </button>
-        </form>
-    );
-}
-
 function FirstSection({ url, refToRef }) {
     let bgUrl =
         "https://ableton-production.imgix.net/about/header.jpg?fit=crop&auto=format&fm=jpg";
@@ -235,22 +178,7 @@ function FirstSection({ url, refToRef }) {
             >
                 <AbletonTextLogo extras="h-14" />
             </div>
-            <article className="ml-12 mr-12 mt-16 mb-16 md:mx-44 md:my-24 xl:mx-80 xl:my-28">
-                <p className="font-bold text-lg lg:text-3xl">
-                    We make <span className="text-[#0000ff]">Live</span>,{" "}
-                    <span className="text-[#0000ff]">Push</span> and{" "}
-                    <span className="text-[#0000ff]">Link</span> — unique
-                    software and hardware for music creation and performance.
-                    With these products, our community of users creates amazing
-                    things.
-                </p>
-                <p className="text-sm mt-5 lg:text-base">
-                    Ableton was founded in 1999 and released the first version
-                    of Live in 2001. Our products are used by a community of
-                    dedicated musicians, sound designers, and artists from
-                    across the world.
-                </p>
-            </article>
+            <SectionArticle number="one"/>
         </section>
     );
 }
@@ -302,18 +230,7 @@ function SecondSection({ wh, refOne, refTwo }) {
 function ThirdSection() {
     return (
         <section>
-            <article className="ml-12 mr-12 mt-16 mb-16 md:mx-44 md:my-24 xl:mx-80 xl:my-28">
-                <p className="font-bold text-lg lg:text-3xl">
-                    Making music isn’t easy. It takes time, effort, and
-                    learning. But when you’re in the flow, it’s incredibly
-                    rewarding.
-                </p>
-                <p className="text-sm mt-5 lg:text-base">
-                    We feel the same way about making Ableton products. The
-                    driving force behind Ableton is our passion for what we
-                    make, and the people we make it for.
-                </p>
-            </article>
+            <SectionArticle number="two"/>
             <div className="ml-12 mr-12 mt-16 mb-16 md:mx-44 md:my-24 xl:mx-80 xl:my-28">
             <LazyLoadedImage />
                 {/*<Suspense fallback={<div>Loading...</div>}>
@@ -324,295 +241,7 @@ function ThirdSection() {
     );
 }
 
-function UltimateFooter({ selec, lang, count, countryName }) {
-    const eduList = [
-        "Education",
-        "Offers for students and teachers",
-        "Ableton for Classroom",
-        "Ableton for Colleges and Universities",
-    ];
 
-    const comList = [
-        "Community",
-        "Find Ableton User Groups",
-        "Find Certified Training",
-        "Become a certified Trainer",
-    ];
-
-    const disList = ["Distributors", "Find Distributors", "Try Push in-store"];
-
-    const logosList = ["Register Live or Push", "About Ableton", "Jobs"];
-
-    return (
-        <footer className="mx-[6%]">
-            <AbletonTextLogoBlack extras="h-8" />
-            <ul lg:mx-auto>
-                <div className="lg:grid lg:grid-cols-3 lg:gap-4">
-                <FormItem />
-                <Logos names={logosList} />
-                <FooterItem names={eduList} useCase={1} />
-                <FooterItem names={comList} useCase={1} />
-                <FooterItem names={disList} useCase={1} />
-                <CountryDropdown
-                    cb={selec}
-                    language={lang}
-                    country={count}
-                    cname={countryName}
-                />
-                <FooterItemLegal extraValues="lg:col-span-3"/>
-                </div>
-            </ul>
-        </footer>
-    );
-}
-
-function FooterItemLegal({extraValues}) {
-    const legal = [
-        "Contact Us",
-        "Press Resources",
-        "Legal Info",
-        "Privacy Policy",
-        "Cookie Settings",
-        "Imprint",
-    ];
-
-    const listItems = legal.map(useCaseLast);
-
-    function useCaseLast(item, index) {
-        return (
-            <li key={index}>
-                <a
-                    href="#"
-                    title="meh"
-                    className="no-underline text-xs font-bold"
-                >
-                    {item}
-                </a>
-            </li>
-        );
-    }
-
-    return (
-        <ul className={`my-5 ${extraValues} lg:flex lg:flex-row lg:items-center lg:justify-between lg:my-0`}>
-            <li>
-            <div className="lg:grid lg:grid-cols-6 lg:gap-2">
-            {listItems}
-            </div>
-            </li>
-            <li className="mt-12 lg:mt-0">
-                <div className="block">
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="60"
-                        height="28"
-                        aria-labelledby="logo"
-                        className="fill-black inline-block h-16 w-16"
-                        viewBox="0 0 45 21"
-                    >
-                        <path d="M0 0h3v21H0zm6 0h3v21H6zm6 0h3v21h-3zm6 0h3v21h-3zm6 18h21v3H24zm0-6h21v3H24zm0-6h21v3H24zm0-6h21v3H24z"></path>
-                    </svg>
-                    <span className="inline-block text-xs ml-3 font-bold">
-                        Made in Berlin
-                    </span>
-                </div>
-            </li>
-        </ul>
-    );
-}
-
-function CountryDropdown({ cb, language, country, cname }) {
-    let classProps = "hover:bg-blue-400";
-    return (
-        <div>
-            <h4>Language and Location</h4>
-            <div className="inline-block pl-3 relative text-xs font-bold group bg-slate-300 cursor-pointer min-w-[95px] h-6 leading-6 my-2">
-                {language}
-                <i className="fa fa-caret-down text-xs float-right leading-6 mr-2"></i>
-                <div className="hidden absolute bg-slate-800 min-w-[95px] group-hover:block text-white ">
-                    <ul>
-                        <li
-                            className={classProps}
-                            onClick={() => {
-                                cb("English");
-                            }}
-                        >
-                            English
-                        </li>
-                        <li
-                            className={classProps}
-                            onClick={() => {
-                                cb("Bangla");
-                            }}
-                        >
-                            Bangla
-                        </li>
-                        <li
-                            className={classProps}
-                            onClick={() => {
-                                cb("Hindi");
-                            }}
-                        >
-                            Hindi
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div className="inline-block ml-2 pl-3 relative text-xs font-bold group bg-slate-300 cursor-pointer min-w-[125px] h-6 leading-6 my-2">
-                {cname}
-                <i className="fa fa-caret-down text-xs float-right leading-6 mr-2"></i>
-                <div className="hidden absolute bg-slate-800 min-w-[125px] group-hover:block text-white ">
-                    <ul>
-                        <li
-                            className={classProps}
-                            onClick={() => {
-                                country("Bangladesh");
-                            }}
-                        ></li>
-                        <li
-                            className={classProps}
-                            onClick={() => {
-                                country("India");
-                            }}
-                        >
-                            India
-                        </li>
-                        <li
-                            className={classProps}
-                            onClick={() => {
-                                country("Pakistan");
-                            }}
-                        >
-                            Pakistan
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    );
-}
-
-function FooterItem({ names, useCase }) {
-    let listItems = null;
-
-    switch (useCase) {
-        case 1:
-            listItems = names.map(useCaseOne);
-            break;
-        case 3:
-            listItems = names.map(useCaseLast);
-            break;
-        default:
-            listItems = names.map(useCaseOne);
-    }
-
-    function useCaseOne(item, index) {
-        const compItem =
-            index === 0 ? (
-                <li key={index} className="font-semibold text-sm">
-                    {item}
-                </li>
-            ) : (
-                <li key={index} className="text-sm my-2">
-                    <a href="#" title="meh" className="no-underline">
-                        {item}&nbsp;<i className="fas fa-angle-right"></i>
-                    </a>
-                </li>
-            );
-        return compItem;
-    }
-
-    function useCaseLast(item, index) {
-        return (
-            <li key={index}>
-                <a
-                    href="#"
-                    title="meh"
-                    className="no-underline text-xs font-bold"
-                >
-                    {item}
-                </a>
-            </li>
-        );
-    }
-
-    return <ul className="my-5">{listItems}</ul>;
-}
-
-function Logos({ names }) {
-    return (
-        <ul>
-            {names.map((item, index) => {
-                return (
-                    <li key={index} className="text-sm my-2">
-                        <a href="#" title="meh" className="no-underline">
-                            {item}&nbsp;<i className="fas fa-angle-right"></i>
-                        </a>
-                    </li>
-                );
-            })}
-            <li key="logos" className="flex flex-start items-center">
-                <a href="#" title="Fb" className="bg-[#4267B2] h-8 w-8 mr-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
-                        <path
-                            fill="#fff"
-                            d="M33.334 20a13.333 13.333 0 10-15.417 13.167v-9.312h-3.385V20h3.385v-2.933c0-3.342 1.991-5.187 5.036-5.187a20.5 20.5 0 012.985.26v3.277h-1.681a1.927 1.927 0 00-2.173 2.082v2.5h3.7l-.591 3.854h-3.109v9.314A13.337 13.337 0 0033.334 20z"
-                        ></path>
-                        <path
-                            fill="#3477f2"
-                            d="M25.19 23.854L25.781 20h-3.7v-2.5a1.927 1.927 0 012.173-2.082h1.681v-3.283a20.5 20.5 0 00-2.985-.26c-3.046 0-5.036 1.846-5.036 5.188v2.938h-3.383v3.854h3.385v9.32a13.473 13.473 0 004.167 0v-9.317z"
-                        ></path>
-                    </svg>
-                </a>
-                <a
-                    href="#"
-                    title="twitter"
-                    className="bg-[#1DA1F2] h-8 w-8 mr-2"
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
-                        <path
-                            fill="#fff"
-                            d="M15.362 30.159a14.5 14.5 0 0014.594-14.594c0-.222 0-.443-.015-.663a10.436 10.436 0 002.559-2.655 10.238 10.238 0 01-2.946.807 5.147 5.147 0 002.255-2.837 10.279 10.279 0 01-3.257 1.245 5.134 5.134 0 00-8.741 4.678A14.562 14.562 0 019.24 10.781a5.133 5.133 0 001.588 6.847 5.091 5.091 0 01-2.328-.642v.065a5.131 5.131 0 004.115 5.028 5.121 5.121 0 01-2.316.088 5.135 5.135 0 004.792 3.562 10.292 10.292 0 01-6.37 2.2 10.441 10.441 0 01-1.221-.074 14.521 14.521 0 007.862 2.3"
-                        ></path>
-                    </svg>
-                </a>
-                <a
-                    href="#"
-                    title="Youtube"
-                    className="bg-[#ff0000] h-8 w-8 mr-2"
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
-                        <path
-                            fill="#fff"
-                            d="M32.776 13.601a3.351 3.351 0 00-2.358-2.373C28.339 10.667 20 10.667 20 10.667s-8.339 0-10.418.561a3.351 3.351 0 00-2.358 2.373 35.146 35.146 0 00-.557 6.46 35.146 35.146 0 00.557 6.46 3.351 3.351 0 002.358 2.373c2.08.561 10.418.561 10.418.561s8.339 0 10.418-.561a3.351 3.351 0 002.358-2.373 35.146 35.146 0 00.557-6.46 35.146 35.146 0 00-.557-6.46z"
-                        ></path>
-                        <path
-                            fill="#ff001d"
-                            d="M17.273 24.025l6.97-3.961-6.97-3.969z"
-                        ></path>
-                    </svg>
-                </a>
-                <a
-                    href="#"
-                    title="Instagram"
-                    className="bg-[#fa7e1e] h-8 w-8 mr-2"
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
-                        <g fill="#fff" transform="translate(-336 -285)">
-                            <path d="M356 294.069c3.56 0 3.982.014 5.388.078a7.38 7.38 0 012.476.459 4.416 4.416 0 012.53 2.53 7.38 7.38 0 01.459 2.476c.064 1.406.078 1.828.078 5.388s-.014 3.982-.078 5.388a7.38 7.38 0 01-.459 2.476 4.416 4.416 0 01-2.53 2.53 7.38 7.38 0 01-2.476.459c-1.406.064-1.827.078-5.388.078s-3.982-.014-5.388-.078a7.38 7.38 0 01-2.476-.459 4.416 4.416 0 01-2.53-2.53 7.38 7.38 0 01-.459-2.476c-.064-1.406-.078-1.828-.078-5.388s.014-3.982.078-5.388a7.38 7.38 0 01.459-2.476 4.416 4.416 0 012.53-2.53 7.38 7.38 0 012.476-.459c1.406-.064 1.828-.078 5.388-.078m0-2.4c-3.621 0-4.075.015-5.5.08a9.787 9.787 0 00-3.237.62 6.818 6.818 0 00-3.9 3.9 9.787 9.787 0 00-.62 3.237c-.065 1.422-.08 1.876-.08 5.5s.015 4.075.08 5.5a9.787 9.787 0 00.62 3.237 6.818 6.818 0 003.9 3.9 9.787 9.787 0 003.237.62c1.422.065 1.876.08 5.5.08s4.075-.015 5.5-.08a9.787 9.787 0 003.237-.62 6.818 6.818 0 003.9-3.9 9.787 9.787 0 00.62-3.237c.065-1.422.08-1.876.08-5.5s-.015-4.075-.08-5.5a9.787 9.787 0 00-.62-3.237 6.818 6.818 0 00-3.9-3.9 9.787 9.787 0 00-3.237-.62c-1.422-.065-1.876-.08-5.5-.08z"></path>
-                            <path d="M356 298.153a6.847 6.847 0 106.847 6.847 6.847 6.847 0 00-6.847-6.847zm0 11.291a4.444 4.444 0 114.444-4.444 4.444 4.444 0 01-4.444 4.444z"></path>
-                            <circle
-                                cx="1.6"
-                                cy="1.6"
-                                r="1.6"
-                                transform="translate(361.517 296.283)"
-                            ></circle>
-                        </g>
-                    </svg>
-                </a>
-            </li>
-        </ul>
-    );
-}
 
 function FourthSection({windowDimensions}) {
 
@@ -634,23 +263,7 @@ function FourthSection({windowDimensions}) {
 
     return (
         <section>
-            <article className="mx-12 my-16 md:mx-44 md:my-24 xl:mx-80 xl:my-28">
-                <p className="font-bold text-lg lg:text-3xl">
-                    We are more than 350 people from 30 different countries
-                    divided between our headquarters in Berlin and our offices
-                    in Los Angeles and Tokyo.
-                </p>
-                <p className="text-sm mt-5 lg:text-base">
-                    Most of us are active musicians, producers, and DJs, and
-                    many of us use Live and Push every day. We come from a wide
-                    range of cultural and professional backgrounds. Some of us
-                    have PhDs, some are self-taught, and most of us are
-                    somewhere in between. What connects us is the shared belief
-                    that each of us has the skills and knowledge to contribute
-                    to something big: helping to shape the future of music
-                    culture.
-                </p>
-            </article>
+           <SectionArticle number="three"/>
             <div className="gradiented-div-three w-full flex items-center justify-evenly" style={{
                 height: `${height}px`}}>
                <div className="flex flex-col items-center justify-evenly flex-wrap h-full">
@@ -675,19 +288,6 @@ function FourthSection({windowDimensions}) {
                }}>
                    
                </div>
-                {/*
-                <img
-                    src="https://ableton-production.imgix.net/about/photo-3.jpg?fit=crop"
-                    className="h-[33%] w-[36%] object-cover absolute top-[15%] left-[7%]"
-                />
-                <img
-                    src="https://ableton-production.imgix.net/about/photo-4.jpg?fit=crop"
-                    className="h-[33%] w-[36%] object-cover absolute left-[7%] top-[60%]"
-                />
-                <img
-                    src="https://ableton-production.imgix.net/about/photo-5.jpg?fit=crop"
-                    className="h-[55%] w-[40%] object-cover absolute top-[30%] left-[50%]"
-                />*/}
             </div>
         </section>
     );
@@ -696,31 +296,7 @@ function FourthSection({windowDimensions}) {
 function SixthSection() {
     return (
         <section>
-            <article className="mx-12 my-16 md:mx-44 md:my-24 xl:mx-80 xl:my-28">
-                <p className="font-bold text-lg lg:text-3xl">
-                    We’re passionate about what we do, but we’re equally
-                    passionate about improving who we are.
-                </p>
-                <p className="text-sm mt-5 lg:text-base">
-                    We work hard to foster an environment where people can grow
-                    both personally and professionally, and we strive to create
-                    a wealth of opportunities to learn from and with each other.
-                    Alongside an internal training program, employees are
-                    actively supported in acquiring new knowledge and skills,
-                    and coached on applying these in their daily work. In
-                    addition, staff-organized development and music salons are a
-                    chance to discuss new technologies, production techniques
-                    and best practices.
-                </p>
-                <p className="text-sm mt-5 lg:text-base">
-                    Alongside an internal training program, employees are
-                    actively supported in acquiring new knowledge and skills,
-                    and coached on applying these in their daily work. In
-                    addition, staff-organized development and music salons are a
-                    chance to discuss new technologies, production techniques
-                    and best practices
-                </p>
-            </article>
+           <SectionArticle number="five"/>
             <div className="gradiented-div-four flex items-center justify-end w-full aspect-[1366/797]">
                 <img loading="lazy"
                     src="https://ableton-production.imgix.net/about/photo-6-a.jpg?fit=crop&h=342&ixjsv=1.1.3&w=455"
@@ -738,24 +314,7 @@ function SixthSection() {
 function SeventhSection() {
     return (
         <section className="w-full mb-16">
-            <article className="mx-12 my-16 md:mx-44 md:my-24 xl:mx-80 xl:my-28">
-                <p className="font-bold text-lg lg:text-3xl">
-                    We want our employees to love it here. Since we’re looking
-                    for exceptional talent from around the world, we will do
-                    everything we can to make your transition as easy as
-                    possible.
-                </p>
-                <p className="text-sm mt-5 lg:text-base">
-                    If you're joining us in Berlin, we'll help with relocation
-                    and paperwork. We’ll even provide you with free German or
-                    English lessons. Plus, working in Germany means you can
-                    expect comprehensive health insurance for you and your
-                    family, as well as generous maternity and paternity leave.
-                    Office hours are flexible, but it’s not all work; we have
-                    several company and team outings throughout the year as well
-                    as a variety of fun, informal small-group activities.
-                </p>
-            </article>
+            <SectionArticle number="six"/>
             <div className="bg-[#B1C5FF] w-[84%] aspect-[860/798] xl:aspect-[2/1] xl:flex xl:flex-row xl:items-center mx-auto">
                 <img loading="lazy"
                     src="https://ableton-production.imgix.net/about/photo-8.jpg?crop=right&fit=crop&h=238&ixjsv=1.1.3&w=397"
@@ -768,7 +327,7 @@ function SeventhSection() {
                         of it, please join us.
                     </p>
                     <a className="text-[#0000ff] block no-underline font-bold text-lg xl:text-3xl mt-[1%]" href="#">
-                        See latest jobs<span className="font-bold text-sm inline-flex items-center"> &gt;</span>
+                        See latest jobs<i className="fas fa-angle-right text-sm"></i>
                     </a>
                     </div>
                 </article>
@@ -780,22 +339,7 @@ function SeventhSection() {
 function FifthSection() {
     return (
         <section className="w-full">
-            <article className="mx-12 my-16 md:mx-44 md:my-24 xl:mx-80 xl:my-28">
-                <p className="font-bold text-lg lg:text-3xl">
-                    We believe it takes focus to create truly outstanding
-                    instruments. We only work on a few products and we strive to
-                    make them great.
-                </p>
-                <p className="text-sm mt-5 lg:text-base">
-                    Rather than having a one-size-fits-all process, we try to
-                    give our people what they need to work their magic and grow.
-                    We’ve learned that achieving the best results comes from
-                    building teams that are richly diverse, and thus able to
-                    explore problems from a wider set of perspectives. We don’t
-                    always agree with each other, but opinion and debate are
-                    valued and openly encouraged.
-                </p>
-            </article>
+           <SectionArticle number="four"/>
             <div className="w-full flex items-center justify-evenly">
                 <img loading="lazy" src="https://ableton-production.imgix.net/about/poster-meet-the-makers.jpg?auto=format&fit=crop&fm=jpg&ixjsv=1.1.3&w=1138" className="aspect-[100/57] w-[83%]" />
             </div>
@@ -824,259 +368,5 @@ function AbletonTextLogo({ extras }) {
     );
 }
 
-function HeaderComp(props) {
-    const headerBlue = (
-        <header className="pt-5 pb-5 bg-[#0000ff]">{props.children}</header>
-    );
-
-    const headerNormal = (
-        <header className="pt-5 pb-5 border-[#eee] border-solid border-[2px]">
-            {props.children}
-        </header>
-    );
-
-    return props.state ? headerBlue : headerNormal;
-}
-
-function SecNav() {
-    return (
-        <ul className="flex ml-6 font-normal mt-5 mb-5 text-sm">
-            <li>
-                <a href="#" className="no-underline text-[#FF764D] mr-3">
-                    About
-                </a>
-            </li>
-            <li>
-                <a href="#" className="no-underline ml-3 mr-3">
-                    Jobs
-                </a>
-            </li>
-            <li>
-                <a href="#" className="no-underline ml-3 mr-3">
-                    Apprenticeships
-                </a>
-            </li>
-        </ul>
-    );
-}
-
-function Navbar({ st, cb }) {
-    const bar = (
-        <nav className="w-full flex items-center justify-start">
-            <NavigationLogo state={st} />
-            <Megadrop state={st} onSquareClick={cb} />
-        </nav>
-    );
-
-    const barWithDiv = (
-        <>
-            {" "}
-            <nav className="w-full flex items-center justify-start">
-                <NavigationLogo state={st} />
-                <Megadrop state={st} onSquareClick={cb} />
-            </nav>{" "}
-            <div className="bg-[#0000ff]">
-                {" "}
-                <PageLinks state={st} />
-                <MoreOnAb state={st} /> <MoreFromAb state={st} />
-            </div>
-        </>
-    );
-
-    return st ? barWithDiv : bar;
-}
-
-function Megadrop({ state, onSquareClick }) {
-    const clickedButton = (
-        <button
-            className="font-bold text-xl ml-4 text-[#ffffff]"
-            onClick={onSquareClick}
-        >
-            Menu&nbsp;<i className="fa fa-caret-up text-xs"></i>
-        </button>
-    );
-
-    const unclickedButton = (
-        <button
-            className="font-bold text-xl ml-4 lg:hidden"
-            onClick={onSquareClick}
-        >
-            Menu&nbsp;<i className="fa fa-caret-down text-xs"></i>
-        </button>
-    );
-    return state ? clickedButton : unclickedButton;
-}
-
-function NavigationLogo({ state }) {
-    const fillColor = state ? "fill-white" : "fill-black";
-
-    return (
-        <a
-            href="#"
-            className="no-underline ml-6 mr-3"
-            alt="Main logo for Ableton"
-        >
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="60"
-                height="28"
-                aria-labelledby="logo"
-                className={fillColor}
-                viewBox="0 0 45 21"
-            >
-                <path d="M0 0h3v21H0zm6 0h3v21H6zm6 0h3v21h-3zm6 0h3v21h-3zm6 18h21v3H24zm0-6h21v3H24zm0-6h21v3H24zm0-6h21v3H24z"></path>
-            </svg>
-        </a>
-    );
-}
-
-function PageLinks({ state }) {
-    const colors = state ? "text-white" : "text-black";
-
-    return (
-        <ul className="flex flex-col flex-wrap mt-5 ml-5">
-            <Link pName="Live" otherprops={colors} spacing="mb-3" />
-            <Link pName="Push" otherprops={colors} spacing="mb-3 mt-3" />
-            <Link pName="Note" otherprops={colors} spacing="mb-3 mt-3" />
-            <Link pName="Link" otherprops={colors} spacing="mb-3 mt-3" />
-            <Link pName="Shop" otherprops={colors} spacing="mb-3 mt-3" />
-            <Link pName="Packs" otherprops={colors} spacing="mb-3 mt-3" />
-            <Link pName="Help" otherprops={colors} spacing="mb-3 mt-3" />
-            {/*  <Link
-                pName="Try Live for free"
-                otherprops={colors}
-                spacing="mb-3 mt-3"
-            />
-            <Link
-                pName="Log in or register"
-                otherprops={`text-xs ${colors}`}
-                spacing="mb-3 mt-3"
-            />*/}
-        </ul>
-    );
-}
-
-function Link({ pName, otherprops, spacing }) {
-    return (
-        <li className={spacing}>
-            <a
-                href="#"
-                alt="Other web pages on ableton"
-                className={`no-underline font-bold ${otherprops}`}
-            >
-                {pName}
-            </a>
-        </li>
-    );
-}
-
-function MoreOnAb({ state }) {
-    const colors = state ? "text-white" : "text-black";
-
-    const pages = [
-        "More on Ableton.com:",
-        "Blog",
-        "Ableton for the Classroom",
-        "Ableton for Colleges and Universities",
-        "Certified Training",
-        "About Ableton",
-        "Jobs",
-        "Apprenticeships",
-    ];
-
-    return (
-        <ul
-            className={`flex ml-5 mt-3 mb-3 flex-col flex-wrap font-bold ${colors}`}
-        >
-            {pages[0]}
-            {
-                pages
-                    .filter((item) => item !== "More on Ableton.com:")
-                    .map((item, index) => {
-                        if (item === "About Ableton") {
-                            return (
-                                <li
-                                    key={index}
-                                    className="font-medium mt-3 mb-3 text-xs text-[#FF764D]"
-                                >
-                                    {item}
-                                </li>
-                            );
-                        }
-
-                        return (
-                            <li
-                                key={index}
-                                className={`font-medium mt-3 mb-3 text-xs ${colors}`}
-                            >
-                                {item}
-                            </li>
-                        );
-                    }) /* <-- Add closing parenthesis here */
-            }
-        </ul>
-    );
-}
-
-function MoreFromAb({ state }) {
-    const colors = state ? "text-white" : "text-black";
-
-    const listTexts = [
-        "More from Ableton:",
-        "Loop",
-        "Watch Talks, Performances and Features from Ableton's Summit for Music Makers",
-        "Learning Music",
-        "Learn the fundamentals of music making right in your browser.",
-        "Learning Synths",
-        "Get started with synthesis using a web-based synth and accompanying lessons.",
-        "Making Music",
-        "Some tips from 74 Creative Strategies for Electronic Producers.",
-    ];
-
-    return (
-        <>
-            <h3 className={`${colors} font-bold ml-5 mt-3 mb-3`}>
-                {listTexts[0]}
-            </h3>
-            <ul
-                className={`flex ml-5 mt-3 mb-3 flex-row font-bold ${colors} overflow-x-scroll`}
-            >
-                <EachItem
-                    headingText={listTexts[1]}
-                    paraText={listTexts[2]}
-                    textColor={colors}
-                    extras="ml-0 mr-3 w-[25%] min-w-[180px]"
-                />
-                <EachItem
-                    headingText={listTexts[3]}
-                    paraText={listTexts[4]}
-                    textColor={colors}
-                    extras="ml-3 mr-3 w-[25%] min-w-[180px]"
-                />
-                <EachItem
-                    headingText={listTexts[5]}
-                    paraText={listTexts[6]}
-                    textColor={colors}
-                    extras="ml-3 mr-3 w-[25%] min-w-[180px]"
-                />
-                <EachItem
-                    headingText={listTexts[7]}
-                    paraText={listTexts[8]}
-                    textColor={colors}
-                    extras="ml-3 mr-3 w-[25%] min-w-[180px]"
-                />
-            </ul>
-        </>
-    );
-}
-
-function EachItem({ headingText, paraText, textColor, extras }) {
-    return (
-        <li className={extras}>
-            <h4>{headingText}</h4>
-            <p className={`font-normal text-xs ${textColor}`}>{paraText}</p>
-        </li>
-    );
-}
 
 export default App;
