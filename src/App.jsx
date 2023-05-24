@@ -1,5 +1,6 @@
 import { lazy, useState, Suspense } from "react";
-import {useFormik} from 'formik';
+import { useFormik } from "formik";
+import ImprovedHeader from "./components/ImprovedHeader";
 
 /* Add SecNav to the actual header instead of under it
    Fix the spacing across all elements, perhaps assing a different file to hold different spacing variables
@@ -14,6 +15,8 @@ const LazyImage = lazy(() => import("./components/LazyLoadedImage.jsx"));
 function App() {
     const [state, setState] = useState(false);
 
+    const [moreState, setMore] = useState(false);
+
     const [language, setLanguage] = useState("English");
 
     const [country, setCountry] = useState("Bangladesh");
@@ -22,7 +25,7 @@ function App() {
         setLanguage(selection);
     }
 
-    function handleSelectionCountry(countryN){
+    function handleSelectionCountry(countryN) {
         setCountry(countryN);
     }
 
@@ -30,12 +33,17 @@ function App() {
         setState(!state);
     }
 
+    function moreHandle(){
+        setMore(!moreState);
+    }
+
     return (
         <>
-            <HeaderComp state={state}>
-            <Navbar st={state} cb={handleClick} />
+            <ImprovedHeader clicked={state} menuClicked={handleClick} moreClicked={moreState} moreClickedHandler={moreHandle}/>
+            {/*<HeaderComp state={state}>
+                <Navbar st={state} cb={handleClick} />
             </HeaderComp>
-            <SecNav />
+            <SecNav />*/}
             <FirstSection />
             <SecondSection />
             <ThirdSection />
@@ -43,67 +51,68 @@ function App() {
             <FifthSection />
             <SixthSection />
             <SeventhSection />
-            <UltimateFooter selec={handleSelection} lang={language} count={handleSelectionCountry} countryName={country}/>
+            <UltimateFooter
+                selec={handleSelection}
+                lang={language}
+                count={handleSelectionCountry}
+                countryName={country}
+            />
         </>
     );
 }
 
-function FormItem(){
-    return (<ul className="my-5">
-        <li className="my-2"><h4 className="text-sm font-semibold">Sign up to our newsletter</h4></li>
-        <li className="my-2"><p className="text-sm">Enter your email address to stay up to date with the latest offers, tutorials, downloads, surveys and more.</p></li>
-        <li className="my-2"><NewsLetterForm /></li>
-        </ul>);
+function FormItem() {
+    return (
+        <ul className="my-5">
+            <li className="my-2">
+                <h4 className="text-sm font-semibold">
+                    Sign up to our newsletter
+                </h4>
+            </li>
+            <li className="my-2">
+                <p className="text-sm">
+                    Enter your email address to stay up to date with the latest
+                    offers, tutorials, downloads, surveys and more.
+                </p>
+            </li>
+            <li className="my-2">
+                <NewsLetterForm />
+            </li>
+        </ul>
+    );
 }
 
-
-function NewsLetterForm(){
+function NewsLetterForm() {
     const formik = useFormik({
+        initialValues: {
+            email: "",
+        },
 
-     initialValues: {
+        onSubmit: (values) => {
+            alert(JSON.stringify(values, null, 2));
+        },
+    });
 
-       email: '',
+    return (
+        <form onSubmit={formik.handleSubmit}>
+            <input
+                id="email"
+                name="email"
+                type="email"
+                placeholder="Email Address"
+                onChange={formik.handleChange}
+                value={formik.values.email}
+                className="text-sm w-[250px] p-2 h-10 bg-slate-200"
+            />
 
-     },
-
-     onSubmit: values => {
-
-       alert(JSON.stringify(values, null, 2));
-
-     },
-
-   });
-
-   return (
-
-     <form onSubmit={formik.handleSubmit}>
-
-
-       <input
-
-         id="email"
-
-         name="email"
-
-         type="email"
- 
-         placeholder="Email Address"
-
-         onChange={formik.handleChange}
-
-         value={formik.values.email}
-
-         className="text-sm w-[250px] p-2 h-10 bg-slate-200"
-
-       />
-
- 
-
-       <button type="submit" className="text-sm text-white bg-[#0000ff] h-10 w-[80px] font-bold">Sign Up</button>
-
-     </form>
-
-   );
+            <button
+                type="submit"
+                className="text-sm text-white bg-[#0000ff] h-10 w-[80px] font-bold"
+            >
+                Sign Up
+            </button>
+        </form>
+    );
 }
 
 function FirstSection() {
@@ -201,16 +210,20 @@ function UltimateFooter({ selec, lang, count, countryName }) {
                 <FooterItem names={eduList} useCase={1} />
                 <FooterItem names={comList} useCase={1} />
                 <FooterItem names={disList} useCase={1} />
-                <CountryDropdown cb={selec} language={lang} country={count} cname={countryName}/>
+                <CountryDropdown
+                    cb={selec}
+                    language={lang}
+                    country={count}
+                    cname={countryName}
+                />
                 <FooterItemLegal />
             </ul>
         </footer>
     );
 }
 
-function FooterItemLegal(){
-
-const legal = [
+function FooterItemLegal() {
+    const legal = [
         "Contact Us",
         "Press Resources",
         "Legal Info",
@@ -219,9 +232,9 @@ const legal = [
         "Imprint",
     ];
 
-const listItems = legal.map(useCaseLast);
+    const listItems = legal.map(useCaseLast);
 
-function useCaseLast(item, index) {
+    function useCaseLast(item, index) {
         return (
             <li key={index}>
                 <a
@@ -235,26 +248,28 @@ function useCaseLast(item, index) {
         );
     }
 
-  return (<ul className="my-5">
-      {listItems}
-      <li className="mt-12">
-        <div className="block">
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="60"
-                height="28"
-                aria-labelledby="logo"
-                className="fill-black inline-block h-16 w-16"
-                viewBox="0 0 45 21"
-            >
-                <path d="M0 0h3v21H0zm6 0h3v21H6zm6 0h3v21h-3zm6 0h3v21h-3zm6 18h21v3H24zm0-6h21v3H24zm0-6h21v3H24zm0-6h21v3H24z"></path>
-            </svg>
-            <span className="inline-block text-xs ml-3 font-bold">Made in Berlin</span>
-        </div>
-      </li>
-  </ul>);
-
-
+    return (
+        <ul className="my-5">
+            {listItems}
+            <li className="mt-12">
+                <div className="block">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="60"
+                        height="28"
+                        aria-labelledby="logo"
+                        className="fill-black inline-block h-16 w-16"
+                        viewBox="0 0 45 21"
+                    >
+                        <path d="M0 0h3v21H0zm6 0h3v21H6zm6 0h3v21h-3zm6 0h3v21h-3zm6 18h21v3H24zm0-6h21v3H24zm0-6h21v3H24zm0-6h21v3H24z"></path>
+                    </svg>
+                    <span className="inline-block text-xs ml-3 font-bold">
+                        Made in Berlin
+                    </span>
+                </div>
+            </li>
+        </ul>
+    );
 }
 
 function CountryDropdown({ cb, language, country, cname }) {
@@ -304,9 +319,7 @@ function CountryDropdown({ cb, language, country, cname }) {
                             onClick={() => {
                                 country("Bangladesh");
                             }}
-                        >
-                            
-                        </li>
+                        ></li>
                         <li
                             className={classProps}
                             onClick={() => {
@@ -685,7 +698,7 @@ function Megadrop({ state, onSquareClick }) {
     );
 
     const unclickedButton = (
-        <button className="font-bold text-xl ml-4" onClick={onSquareClick}>
+        <button className="font-bold text-xl ml-4 lg:hidden" onClick={onSquareClick}>
             Menu&nbsp;<i className="fa fa-caret-down text-xs"></i>
         </button>
     );
@@ -727,7 +740,7 @@ function PageLinks({ state }) {
             <Link pName="Shop" otherprops={colors} spacing="mb-3 mt-3" />
             <Link pName="Packs" otherprops={colors} spacing="mb-3 mt-3" />
             <Link pName="Help" otherprops={colors} spacing="mb-3 mt-3" />
-            <Link
+         {/*  <Link
                 pName="Try Live for free"
                 otherprops={colors}
                 spacing="mb-3 mt-3"
@@ -736,7 +749,7 @@ function PageLinks({ state }) {
                 pName="Log in or register"
                 otherprops={`text-xs ${colors}`}
                 spacing="mb-3 mt-3"
-            />
+            />*/}  
         </ul>
     );
 }
