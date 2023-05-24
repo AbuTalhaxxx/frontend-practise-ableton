@@ -16,8 +16,20 @@ body {
 	color: #000;
 }
 
+/* #D5B3FF */
+
 .gradiented-div {
 
    background-image: linear-gradient(to right, white 45%, #FBFFA7 45%);
 
+}
+
+.gradiented-div-three {
+
+  background-image: linear-gradient(to right, #B6FFC0 60%, White 60%);   
+
+}
+
+.gradiented-div-four {
+  background-image: linear-gradient(to right, White 0%, White 15%, #D5B3FF 15%, #D5B3FF 85%, White 85%, White 100%);   
 }
