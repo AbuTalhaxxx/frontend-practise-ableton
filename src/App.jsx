@@ -1,4 +1,4 @@
-import { lazy, useState, Suspense } from "react";
+import { lazy, useState, Suspense, useEffect } from "react";
 import { useFormik } from "formik";
 import ImprovedHeader from "./components/ImprovedHeader";
 
@@ -21,6 +21,26 @@ function App() {
 
     const [country, setCountry] = useState("Bangladesh");
 
+    const [scrollCount, setScrollCount] = useState(0);
+    
+
+    const [scrollingUp, setScrollUp] = useState(false);
+
+    function handleScroll(){
+    const yValue = window.scrollY;    
+    setScrollUp(scrollCount > yValue); 
+    console.log(`yValue is : ${yValue}`);
+    setScrollCount(yValue);
+    console.log(`count is : ${scrollCount}`);
+    }
+
+    useEffect(()=>{
+
+       window.addEventListener('scroll', handleScroll);
+
+       return ()=>{window.removeEventListener('scroll', handleScroll);}
+    }, [scrollCount, scrollingUp]);
+
     function handleSelection(selection) {
         setLanguage(selection);
     }
@@ -39,7 +59,7 @@ function App() {
 
     return (
         <>
-            <ImprovedHeader clicked={state} menuClicked={handleClick} moreClicked={moreState} moreClickedHandler={moreHandle}/>
+            <ImprovedHeader clicked={state} menuClicked={handleClick} moreClicked={moreState} moreClickedHandler={moreHandle} scrollUp={scrollingUp} count={scrollCount}/>
             {/*<HeaderComp state={state}>
                 <Navbar st={state} cb={handleClick} />
             </HeaderComp>

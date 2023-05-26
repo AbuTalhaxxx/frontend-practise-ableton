@@ -2,17 +2,19 @@
 import AbletonLogo from './AbletonLogo';
 import MainlinksList from './MainlinksList';
 import {moreOnLinks, moreFrom} from './../constants';
+import { motion, AnimatePresence } from "framer-motion"
 
-function ImprovedHeader({clicked, menuClicked, moreClicked, moreClickedHandler}){
+function ImprovedHeader({clicked, menuClicked, moreClicked, moreClickedHandler, scrollUp, count}){
 
         const fillColor = clicked ? ("white"):("black");
         const bgColor = clicked ? ("bg-[#0000ff]"):("bg-white");
         const visibility = clicked ? ("block"):("hidden");
         const moreVisibility = moreClicked ? ("block"):("hidden");
+        const navClassValues = `bg-white/75 z-50 w-full ${(scrollUp && count > 60)?"fixed top-0 left-0" : ""}`;
 
 	return (
         <header>
-        	<nav className={`${bgColor} flex pt-5 pb-3 lg:py-5 lg:border-b-[#eee] lg:border-solid lg:border-[2px] lg:bg-white`}>
+        	<nav className={`${bgColor} flex pt-5 pb-3 ${clicked ? "": ("border-b-[#eee] border-solid border-[2px]")} ${moreClicked ? "":("lg:border-b-[#eee] lg:border-solid lg:border-[2px]")} lg:py-5 lg:bg-white`}>
         	    <a href="#" title="Home page link" className="no-underline ml-5 mr-2.5">
         			<AbletonLogo className={`fill-${fillColor} lg:fill-black`}/>
         	    </a>	
@@ -37,16 +39,21 @@ function ImprovedHeader({clicked, menuClicked, moreClicked, moreClickedHandler})
                         <MoreFromAb state={false} />
                 </div>
                 </nav>
-                <nav>
-                <div className={`w-full bg-[#0000ff] ${visibility} lg:hidden`}>
-                        <MainlinksList className="flex flex-col flex-wrap pt-0 pl-5" colors={fillColor}/>
-                        <RegisterList className="flex flex-col pl-5 flex-wrap" colorOne="#ffffff" colorTwo="#ffffff"/>
-                        <MoreOnList color={fillColor}/>
-                        <MoreFromAb state={moreClicked} />
-                </div>
-                </nav>
-        	<nav>
-        		
+                <nav className="relative">
+  <AnimatePresence>
+  {visibility === "block" && (
+    <motion.div initial={{opacity:0.1}} animate={{y:"1053px",opacity:[1]}} exit={{opacity:0.1, y:"-1053px"}} transition={{duration:.5}} className={`w-full bg-[#0000ff] block lg:hidden absolute top-[-1053px]`}>
+      <MainlinksList className="flex flex-col flex-wrap pt-0 pl-5" colors={fillColor}/>
+      <RegisterList className="flex flex-col pl-5 flex-wrap" colorOne="#ffffff" colorTwo="#ffffff"/>
+      <MoreOnList color={fillColor}/>
+      <MoreFromAb state={clicked} />
+    </motion.div>
+  )}
+  </AnimatePresence>
+</nav>
+
+        	<nav className={navClassValues}>
+        		<SecNav />
         	</nav>
         </header>
 		);
@@ -70,7 +77,7 @@ function MoreOnList(props){
                             return (
                                 <li
                                     key={index}
-                                    className="font-medium my-3 text-sm text-[#FF764D] lg:mx-3"
+                                    className="font-medium my-3 text-sm text-[#FF764D] lg:mx-3 leading-6"
                                 >
                                     <a href="#" title="meh">{item}</a>
                                 </li>
@@ -80,7 +87,7 @@ function MoreOnList(props){
                         return (
                             <li
                                 key={index}
-                                className={`lg:first:ml-0 lg:mx-3 font-medium my-3 text-sm text-${props.color}`}
+                                className={`lg:first:ml-0 lg:mx-3 font-medium my-3 text-sm text-${props.color} leading-6`}
                             >
                                 <a href="#" title="meh">{item}</a>
                             </li>
@@ -148,6 +155,28 @@ function EachItem({ headingText, paraText, textColor, extras }) {
             <h4>{headingText}</h4>
             <p className={`font-normal text-xs ${textColor} leading-6`}>{paraText}</p>
         </li>
+    );
+}
+
+function SecNav() {
+    return (
+        <ul className="flex ml-6 font-normal mt-5 mb-5 text-sm justify-start">
+            <li>
+                <a href="#" className="no-underline text-[#FF764D] mr-3">
+                    About
+                </a>
+            </li>
+            <li>
+                <a href="#" className="no-underline ml-3 mr-3">
+                    Jobs
+                </a>
+            </li>
+            <li>
+                <a href="#" className="no-underline ml-3 mr-3">
+                    Apprenticeships
+                </a>
+            </li>
+        </ul>
     );
 }
 
