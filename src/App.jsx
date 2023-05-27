@@ -1,6 +1,7 @@
-import { lazy, useState, Suspense, useEffect } from "react";
+import { lazy, useState, Suspense, useEffect, useRef } from "react";
 import { useFormik } from "formik";
 import ImprovedHeader from "./components/ImprovedHeader";
+import LazyLoadedImage from './components/LazyLoadedImage';
 
 /* Add SecNav to the actual header instead of under it
    Fix the spacing across all elements, perhaps assing a different file to hold different spacing variables
@@ -9,6 +10,8 @@ import ImprovedHeader from "./components/ImprovedHeader";
    and also figure out spacing of elements before I start a project
    all the sections and the articles in them could have simply used a component function and the strings could have been stored in a different file altogether.
 */
+
+/*https://ableton-production.imgix.net/about/header.jpg?auto=format&fit=crop&fm=jpg&h=234&ixjsv=1.1.3&w=375*/
 
 const LazyImage = lazy(() => import("./components/LazyLoadedImage.jsx"));
 
@@ -22,23 +25,57 @@ function App() {
     const [country, setCountry] = useState("Bangladesh");
 
     const [scrollCount, setScrollCount] = useState(0);
-    
 
     const [scrollingUp, setScrollUp] = useState(false);
 
-    function handleScroll(){
-    const yValue = window.scrollY;    
-    setScrollUp(scrollCount > yValue); 
-    console.log(`yValue is : ${yValue}`);
-    setScrollCount(yValue);
-    console.log(`count is : ${scrollCount}`);
+    const [bgImageUrl, setBgImageUrl] = useState("");
+
+    const [windowHeightWidth, setWindowHeightWidth] = useState([
+        window.innerWidth,
+        window.innerHeight,
+    ]);
+
+    function handleScroll() {
+        const yValue = window.scrollY;
+        setScrollUp(scrollCount > yValue);
+        setScrollCount(yValue);
     }
 
-    useEffect(()=>{
+    const bgDiv = useRef(null);
 
-       window.addEventListener('scroll', handleScroll);
+    function setObserver() {
+        let observer = new ResizeObserver((entries) => {
+            let entry = entries[0];
+            setBgImageUrl(
+                `https://ableton-production.imgix.net/about/header.jpg?auto=format&fit=crop&fm=jpg&h=${entry.contentRect.height}&ixjsv=1.1.3&w=${entry.contentRect.width}`
+            );
+        });
 
-       return ()=>{window.removeEventListener('scroll', handleScroll);}
+        if (bgDiv.current && bgDiv.current instanceof Element) {
+            observer.observe(bgDiv.current);
+        }
+
+        return () => {
+            observer.disconnect();
+        };
+    }
+
+    useEffect(setObserver, [bgImageUrl, bgDiv]);
+
+    useEffect(() => {
+        window.onresize = () => {
+            setWindowHeightWidth([window.innerWidth, window.innerHeight]);
+        };
+
+        return ()=>{window.onresize = null;};
+    }, []);
+
+    useEffect(() => {
+        window.addEventListener("scroll", handleScroll);
+
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+        };
     }, [scrollCount, scrollingUp]);
 
     function handleSelection(selection) {
@@ -53,21 +90,28 @@ function App() {
         setState(!state);
     }
 
-    function moreHandle(){
+    function moreHandle() {
         setMore(!moreState);
     }
 
     return (
         <>
-            <ImprovedHeader clicked={state} menuClicked={handleClick} moreClicked={moreState} moreClickedHandler={moreHandle} scrollUp={scrollingUp} count={scrollCount}/>
+            <ImprovedHeader
+                clicked={state}
+                menuClicked={handleClick}
+                moreClicked={moreState}
+                moreClickedHandler={moreHandle}
+                scrollUp={scrollingUp}
+                count={scrollCount}
+            />
             {/*<HeaderComp state={state}>
                 <Navbar st={state} cb={handleClick} />
             </HeaderComp>
             <SecNav />*/}
-            <FirstSection />
-            <SecondSection />
+            <FirstSection url={bgImageUrl} refToRef={bgDiv} />
+            <SecondSection wh={windowHeightWidth} />
             <ThirdSection />
-            <FourthSection />
+            <FourthSection windowDimensions={windowHeightWidth}/>
             <FifthSection />
             <SixthSection />
             <SeventhSection />
@@ -135,14 +179,21 @@ function NewsLetterForm() {
     );
 }
 
-function FirstSection() {
+function FirstSection({ url, refToRef }) {
+    let bgUrl =
+        "https://ableton-production.imgix.net/about/header.jpg?fit=crop&auto=format&fm=jpg";
+
     return (
         <section>
-            <div className="ml-12 mr-12 h-[450px] bg-center flex justify-center items-center bg-no-repeat bg-cover bg-[url('https://ableton-production.imgix.net/about/header.jpg?fit=crop&auto=format&fm=jpg')]">
+            <div
+                ref={refToRef}
+                className={`ml-12 mr-12 h-[450px] bg-center dynamic-image flex justify-center items-center bg-no-repeat bg-cover`}
+                style={{ backgroundImage: `url('${url}'), url('${bgUrl}')` }}
+            >
                 <AbletonTextLogo extras="h-14" />
             </div>
-            <article className="ml-12 mr-12 mt-16 mb-16">
-                <p className="font-bold text-lg">
+            <article className="ml-12 mr-12 mt-16 mb-16 md:mx-44 md:my-24 xl:mx-80 xl:my-28">
+                <p className="font-bold text-lg lg:text-3xl">
                     We make <span className="text-[#0000ff]">Live</span>,{" "}
                     <span className="text-[#0000ff]">Push</span> and{" "}
                     <span className="text-[#0000ff]">Link</span> — unique
@@ -150,7 +201,7 @@ function FirstSection() {
                     With these products, our community of users creates amazing
                     things.
                 </p>
-                <p className="text-sm mt-5">
+                <p className="text-sm mt-5 lg:text-base">
                     Ableton was founded in 1999 and released the first version
                     of Live in 2001. Our products are used by a community of
                     dedicated musicians, sound designers, and artists from
@@ -161,42 +212,63 @@ function FirstSection() {
     );
 }
 
-function SecondSection() {
+function SecondSection({ wh }) {
+    let widthOne = Math.round((wh[0] / 100) * 41);
+    let widthTwo = Math.round((wh[0] / 100) * 33.3);
+    let heightTwo = Math.round((widthTwo / 100) * 75);
+    let mainHeight = Math.round((wh[0]/100)*58);
+    const urlOne = `https://ableton-production.imgix.net/about/photo-1.jpg?fit=crop&h=${widthOne}&ixjsv=1.1.3&w=${widthOne}`;
+    const urlTwo = `https://ableton-production.imgix.net/about/photo-2.jpg?fit=crop&h=${heightTwo}&ixjsv=1.1.3&w=${widthTwo}`;
+    const bgUrlOne =
+        "https://ableton-production.imgix.net/about/photo-1.jpg?fit=crop";
+    const bgUrlTwo =
+        "https://ableton-production.imgix.net/about/photo-2.jpg?fit=crop";
+
     return (
         <section>
-            <div className="flex items-center justify-evenly gradiented-div w-full h-[310px]">
-                <img
-                    src="https://ableton-production.imgix.net/about/photo-1.jpg?fit=crop"
-                    className="w-[45%] h-[55%] cover"
-                />
-                <img
-                    src="https://ableton-production.imgix.net/about/photo-2.jpg?fit=crop"
-                    className="w-[30%] h-[35%] cover"
-                />
+            <div className={`flex items-center justify-evenly gradiented-div w-full`} style={{height: `${mainHeight}px`}}>
+                <div
+                    className="bg-no-repeat bg-cover bg-center"
+                    style={{
+                        width: `${widthOne}px`,
+                        height: `${widthOne}px`,
+                        backgroundImage: `url('${urlOne}'), url('${bgUrlOne}')`}}
+                ></div>
+                <div
+                    className="bg-no-repeat bg-cover bg-center"
+                    style={{
+                        width: `${widthTwo}px`,
+                        height: `${heightTwo}px`,
+                        backgroundImage: `url('${urlTwo}'), url('${bgUrlTwo}')`
+                    }}
+                ></div>
             </div>
         </section>
     );
 }
 
+
+
 function ThirdSection() {
     return (
         <section>
-            <article className="ml-12 mr-12 mt-16 mb-16">
-                <p className="font-bold text-lg">
+            <article className="ml-12 mr-12 mt-16 mb-16 md:mx-44 md:my-24 xl:mx-80 xl:my-28">
+                <p className="font-bold text-lg lg:text-3xl">
                     Making music isn’t easy. It takes time, effort, and
                     learning. But when you’re in the flow, it’s incredibly
                     rewarding.
                 </p>
-                <p className="text-sm mt-5">
+                <p className="text-sm mt-5 lg:text-base">
                     We feel the same way about making Ableton products. The
                     driving force behind Ableton is our passion for what we
                     make, and the people we make it for.
                 </p>
             </article>
-            <div className="ml-12 mr-12 mt-16 mb-16">
-                <Suspense fallback={<div>Loading...</div>}>
+            <div className="ml-12 mr-12 mt-16 mb-16 md:mx-44 md:my-24 xl:mx-80 xl:my-28">
+            <LazyLoadedImage />
+                {/*<Suspense fallback={<div>Loading...</div>}>
                     <LazyImage />
-                </Suspense>
+                </Suspense>*/}
             </div>
         </section>
     );
@@ -486,16 +558,33 @@ function Logos({ names }) {
     );
 }
 
-function FourthSection() {
+function FourthSection({windowDimensions}) {
+
+    const calcDimensions = (toBeDivided, percentage)=>{
+        return Math.round((toBeDivided/100)*percentage);
+    };
+
+    const width = calcDimensions(windowDimensions[0], 59);
+    const height = calcDimensions(width, 128);
+    const widthTwo = calcDimensions(windowDimensions[0], 33);
+    const heightTwo = calcDimensions(widthTwo, 75);
+    const widthOne = calcDimensions(windowDimensions[0], 42);
+    const heightOne = widthOne;
+    
+    const bgUrlOne = `https://ableton-production.imgix.net/about/photo-3.jpg?fit=crop&h=${heightTwo}&ixjsv=1.1.3&w=${widthTwo}`;
+    const bgUrlTwo = `https://ableton-production.imgix.net/about/photo-4.jpg?fit=crop&h=${heightTwo}&ixjsv=1.1.3&w=${widthTwo}`;
+    const bgUrlThree = `https://ableton-production.imgix.net/about/photo-5.jpg?fit=crop&h=${heightOne}&ixjsv=1.1.3&w=${widthOne}`;
+
+
     return (
         <section>
-            <article className="mx-12 my-16">
-                <p className="font-bold text-lg">
+            <article className="mx-12 my-16 md:mx-44 md:my-24 xl:mx-80 xl:my-28">
+                <p className="font-bold text-lg lg:text-3xl">
                     We are more than 350 people from 30 different countries
                     divided between our headquarters in Berlin and our offices
                     in Los Angeles and Tokyo.
                 </p>
-                <p className="text-sm mt-5">
+                <p className="text-sm mt-5 lg:text-base">
                     Most of us are active musicians, producers, and DJs, and
                     many of us use Live and Push every day. We come from a wide
                     range of cultural and professional backgrounds. Some of us
@@ -506,7 +595,31 @@ function FourthSection() {
                     culture.
                 </p>
             </article>
-            <div className="gradiented-div-three w-full h-[350px] relative">
+            <div className="gradiented-div-three w-full flex items-center justify-evenly" style={{
+                height: `${height}px`}}>
+               <div className="flex flex-col items-center justify-evenly flex-wrap h-full">
+               <div className="bg-center bg-cover bg-no-repeat" style={{
+               height: `${heightTwo}px`,
+               width: `${widthTwo}px`,
+               backgroundImage: `url('https://ableton-production.imgix.net/about/photo-3.jpg?fit=crop'), url('${bgUrlOne}')`
+               }}>
+                   
+               </div>
+                <div className="bg-center bg-cover bg-no-repeat" style={{
+               height: `${heightTwo}px`,
+               width: `${widthTwo}px`,
+               backgroundImage: `url('https://ableton-production.imgix.net/about/photo-4.jpg?fit=crop'), url('${bgUrlTwo}')`
+               }}> 
+               </div>
+               </div>
+                <div className="bg-center bg-cover bg-no-repeat" style={{
+               height: `${heightOne}px`,
+               width: `${widthOne}px`,
+               backgroundImage: `url('https://ableton-production.imgix.net/about/photo-5.jpg?fit=crop'), url('${bgUrlThree}')`
+               }}>
+                   
+               </div>
+                {/*
                 <img
                     src="https://ableton-production.imgix.net/about/photo-3.jpg?fit=crop"
                     className="h-[33%] w-[36%] object-cover absolute top-[15%] left-[7%]"
@@ -518,7 +631,7 @@ function FourthSection() {
                 <img
                     src="https://ableton-production.imgix.net/about/photo-5.jpg?fit=crop"
                     className="h-[55%] w-[40%] object-cover absolute top-[30%] left-[50%]"
-                />
+                />*/}
             </div>
         </section>
     );
@@ -527,12 +640,12 @@ function FourthSection() {
 function SixthSection() {
     return (
         <section>
-            <article className="mx-12 my-16">
-                <p className="font-bold text-lg">
+            <article className="mx-12 my-16 md:mx-44 md:my-24 xl:mx-80 xl:my-28">
+                <p className="font-bold text-lg lg:text-3xl">
                     We’re passionate about what we do, but we’re equally
                     passionate about improving who we are.
                 </p>
-                <p className="text-sm mt-5">
+                <p className="text-sm mt-5 lg:text-base">
                     We work hard to foster an environment where people can grow
                     both personally and professionally, and we strive to create
                     a wealth of opportunities to learn from and with each other.
@@ -543,15 +656,23 @@ function SixthSection() {
                     chance to discuss new technologies, production techniques
                     and best practices.
                 </p>
+                <p className="text-sm mt-5 lg:text-base">
+                    Alongside an internal training program, employees are
+                    actively supported in acquiring new knowledge and skills,
+                    and coached on applying these in their daily work. In
+                    addition, staff-organized development and music salons are a
+                    chance to discuss new technologies, production techniques
+                    and best practices
+                </p>
             </article>
-            <div className="gradiented-div-four flex overflow-hidden items-center justify-between h-[300px]">
+            <div className="gradiented-div-four flex items-center justify-end w-full aspect-[1366/797]">
                 <img
                     src="https://ableton-production.imgix.net/about/photo-6-a.jpg?fit=crop&h=342&ixjsv=1.1.3&w=455"
-                    className="object-cover h-[135px] w-[170px] ml-8"
+                    className="object-cover w-[33%] aspect-[456/342] ml-[10%] mr-[14%]"
                 />
                 <img
                     src="https://ableton-production.imgix.net/about/photo-7.jpg?fit=crop&h=569&ixjsv=1.1.3&w=569"
-                    className="object-cover h-[200px] w-[230px] "
+                    className="object-cover w-[42%] aspect-[1/1]"
                 />
             </div>
         </section>
@@ -560,15 +681,15 @@ function SixthSection() {
 
 function SeventhSection() {
     return (
-        <section>
-            <article className="mx-12 my-16">
-                <p className="font-bold text-lg">
+        <section className="w-full">
+            <article className="mx-12 my-16 md:mx-44 md:my-24 xl:mx-80 xl:my-28">
+                <p className="font-bold text-lg lg:text-3xl">
                     We want our employees to love it here. Since we’re looking
                     for exceptional talent from around the world, we will do
                     everything we can to make your transition as easy as
                     possible.
                 </p>
-                <p className="text-sm mt-5">
+                <p className="text-sm mt-5 lg:text-base">
                     If you're joining us in Berlin, we'll help with relocation
                     and paperwork. We’ll even provide you with free German or
                     English lessons. Plus, working in Germany means you can
@@ -579,10 +700,10 @@ function SeventhSection() {
                     as a variety of fun, informal small-group activities.
                 </p>
             </article>
-            <div className="bg-[#B1C5FF] mx-12 my-16">
+            <div className="bg-[#B1C5FF] w-full aspect-[100/57] flex items-center">
                 <img
                     src="https://ableton-production.imgix.net/about/photo-8.jpg?crop=right&fit=crop&h=238&ixjsv=1.1.3&w=397"
-                    className="object-cover"
+                    className="object-cover w-[84%] aspect-[100/57]"
                 />
                 <article>
                     <p className="font-normal text-lg mx-7 my-7">
@@ -601,14 +722,14 @@ function SeventhSection() {
 
 function FifthSection() {
     return (
-        <section>
-            <article className="mx-12 my-16">
-                <p className="font-bold text-lg">
+        <section className="w-full">
+            <article className="mx-12 my-16 md:mx-44 md:my-24 xl:mx-80 xl:my-28">
+                <p className="font-bold text-lg lg:text-3xl">
                     We believe it takes focus to create truly outstanding
                     instruments. We only work on a few products and we strive to
                     make them great.
                 </p>
-                <p className="text-sm mt-5">
+                <p className="text-sm mt-5 lg:text-base">
                     Rather than having a one-size-fits-all process, we try to
                     give our people what they need to work their magic and grow.
                     We’ve learned that achieving the best results comes from
@@ -618,12 +739,13 @@ function FifthSection() {
                     valued and openly encouraged.
                 </p>
             </article>
-            <div className="mx-12 my-16">
-                <img src="https://ableton-production.imgix.net/about/poster-meet-the-makers.jpg?auto=format&fit=crop&fm=jpg&ixjsv=1.1.3&w=1138" />
+            <div className="w-full flex items-center justify-evenly">
+                <img src="https://ableton-production.imgix.net/about/poster-meet-the-makers.jpg?auto=format&fit=crop&fm=jpg&ixjsv=1.1.3&w=1138" className="aspect-[100/57] w-[83%]" />
             </div>
         </section>
     );
 }
+
 
 function AbletonTextLogoBlack({ extras }) {
     return (
@@ -718,7 +840,10 @@ function Megadrop({ state, onSquareClick }) {
     );
 
     const unclickedButton = (
-        <button className="font-bold text-xl ml-4 lg:hidden" onClick={onSquareClick}>
+        <button
+            className="font-bold text-xl ml-4 lg:hidden"
+            onClick={onSquareClick}
+        >
             Menu&nbsp;<i className="fa fa-caret-down text-xs"></i>
         </button>
     );
@@ -760,7 +885,7 @@ function PageLinks({ state }) {
             <Link pName="Shop" otherprops={colors} spacing="mb-3 mt-3" />
             <Link pName="Packs" otherprops={colors} spacing="mb-3 mt-3" />
             <Link pName="Help" otherprops={colors} spacing="mb-3 mt-3" />
-         {/*  <Link
+            {/*  <Link
                 pName="Try Live for free"
                 otherprops={colors}
                 spacing="mb-3 mt-3"
@@ -769,7 +894,7 @@ function PageLinks({ state }) {
                 pName="Log in or register"
                 otherprops={`text-xs ${colors}`}
                 spacing="mb-3 mt-3"
-            />*/}  
+            />*/}
         </ul>
     );
 }

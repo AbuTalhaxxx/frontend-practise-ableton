@@ -2,7 +2,6 @@
 const mainLinks = ["Live", "Link", "Push", "Note", "Link", "Shop", "Packs", "Help"];
 
 const moreOnLinks = [
-        "More on Ableton.com:",
         "Blog",
         "Ableton for the Classroom",
         "Ableton for Colleges and Universities",

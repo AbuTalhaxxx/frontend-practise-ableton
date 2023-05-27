@@ -31,6 +31,6 @@ body {
 }
 
 .gradiented-div-four {
-  background-image: linear-gradient(to right, White 0%, White 15%, #D5B3FF 15%, #D5B3FF 85%, White 85%, White 100%);   
+  background-image: linear-gradient(to right, White 0%, White 17.5%, #D5B3FF 17.5%, #D5B3FF 82.5%, White 82.5%, White 100%);   
 }
 
