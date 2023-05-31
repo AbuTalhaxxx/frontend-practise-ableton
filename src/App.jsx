@@ -681,7 +681,7 @@ function SixthSection() {
 
 function SeventhSection() {
     return (
-        <section className="w-full">
+        <section className="w-full mb-16">
             <article className="mx-12 my-16 md:mx-44 md:my-24 xl:mx-80 xl:my-28">
                 <p className="font-bold text-lg lg:text-3xl">
                     We want our employees to love it here. Since we’re looking
@@ -700,20 +700,21 @@ function SeventhSection() {
                     as a variety of fun, informal small-group activities.
                 </p>
             </article>
-            <div className="bg-[#B1C5FF] w-full aspect-[100/57] flex items-center">
+            <div className="bg-[#B1C5FF] w-[84%] aspect-[860/798] xl:flex-row mx-auto">
                 <img
                     src="https://ableton-production.imgix.net/about/photo-8.jpg?crop=right&fit=crop&h=238&ixjsv=1.1.3&w=397"
-                    className="object-cover w-[84%] aspect-[100/57]"
-                />
-                <article>
-                    <p className="font-normal text-lg mx-7 my-7">
+                    className="object-cover w-full aspect-[375/225]"/>
+                <article className="w-full aspect-[860/282] flex flex-col items-center justify-center">
+                    <div className="w-[78%] aspect-[375/244] md:aspect-[668/110] flex flex-col justify-evenly">
+                    <p className="font-normal text-lg xl:text-3xl">
                         We’re really proud of the work we’ve done so far. But
                         there’s so much more to come. If you’d like to be a part
                         of it, please join us.
                     </p>
-                    <a className="text-[#0000ff] inline-block no-underline font-bold text-lg mx-7 mb-7">
-                        See latest jobs<i className="fas fa-angle-right"></i>
+                    <a className="text-[#0000ff] block no-underline font-bold text-lg xl:text-3xl" href="#">
+                        See latest jobs<span className="font-bold text-sm inline-flex items-center"> &gt;</span>
                     </a>
+                    </div>
                 </article>
             </div>
         </section>
