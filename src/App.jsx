@@ -42,25 +42,67 @@ function App() {
     }
 
     const bgDiv = useRef(null);
+    const bgDivOne = useRef(null);
+    const bgDivTwo = useRef(null);
+
+
+    function intersectionObserverCb(entries, observer){
+
+     entries.forEach((item)=>{
+              console.log("intersected");
+              const className = item.target.classList;
+              let target = item.target;
+            let dataUrl = target.dataset.src;
+            let url = "";
+           
+              if(className.contains("bgDiv")){
+                   target.style.cssText = `background-image: url('${bgImageUrl}'), url('${dataUrl}');`;      
+              }
+              else if(className.contains("bgDivOne")){
+                let height = target.dataset.height;
+                let width = target.dataset.width;
+                url = `https://ableton-production.imgix.net/about/photo-1.jpg?fit=crop&h=${height}&ixjsv=1.1.3&w=${width}`;
+                target.style.cssText = `background-image: url('${url}'), url('${dataUrl}');`;      
+              }
+              else if(className.contains("bgDivTwo")){
+                let height = target.dataset.height;
+                let width = target.dataset.width;
+                url = `https://ableton-production.imgix.net/about/photo-2.jpg?fit=crop&h=${height}&ixjsv=1.1.3&w=${width}`;
+                target.style.cssText = `background-image: url('${url}'), url('${dataUrl}');`;    
+              }  
+     });
+
+    }
 
     function setObserver() {
+        let intersectionObserver = new IntersectionObserver(intersectionObserverCb, {root: null, threshold:.01,});
+
         let observer = new ResizeObserver((entries) => {
+            console.log("Resized");
             let entry = entries[0];
             setBgImageUrl(
                 `https://ableton-production.imgix.net/about/header.jpg?auto=format&fit=crop&fm=jpg&h=${entry.contentRect.height}&ixjsv=1.1.3&w=${entry.contentRect.width}`
             );
+            let dataUrl = entry.target.dataset.src;
+            entry.target.style.cssText = `background-image: url('https://ableton-production.imgix.net/about/header.jpg?auto=format&fit=crop&fm=jpg&h=${entry.contentRect.height}&ixjsv=1.1.3&w=${entry.contentRect.width}'), url('${dataUrl}');`;
         });
 
         if (bgDiv.current && bgDiv.current instanceof Element) {
             observer.observe(bgDiv.current);
+            intersectionObserver.observe(bgDiv.current);
+            intersectionObserver.observe(bgDivOne.current);
+            intersectionObserver.observe(bgDivTwo.current);
         }
 
+        
+
         return () => {
+            intersectionObserver.disconnect();
             observer.disconnect();
         };
     }
 
-    useEffect(setObserver, [bgImageUrl, bgDiv]);
+    useEffect(setObserver, []);
 
     useEffect(() => {
         window.onresize = () => {
@@ -109,7 +151,7 @@ function App() {
             </HeaderComp>
             <SecNav />*/}
             <FirstSection url={bgImageUrl} refToRef={bgDiv} />
-            <SecondSection wh={windowHeightWidth} />
+            <SecondSection wh={windowHeightWidth} refOne={bgDivOne} refTwo={bgDivTwo}/>
             <ThirdSection />
             <FourthSection windowDimensions={windowHeightWidth}/>
             <FifthSection />
@@ -187,8 +229,9 @@ function FirstSection({ url, refToRef }) {
         <section>
             <div
                 ref={refToRef}
-                className={`ml-12 mr-12 h-[450px] bg-center dynamic-image flex justify-center items-center bg-no-repeat bg-cover`}
-                style={{ backgroundImage: `url('${url}'), url('${bgUrl}')` }}
+                className={`ml-12 mr-12 h-[450px] bg-center dynamic-image flex justify-center items-center bg-no-repeat bg-cover bgDiv`}
+                data-src="https://ableton-production.imgix.net/about/header.jpg?fit=crop&auto=format&fm=jpg"
+                /*style={{ backgroundImage: `url('${url}'), url('${bgUrl}')` }}*/
             >
                 <AbletonTextLogo extras="h-14" />
             </div>
@@ -212,7 +255,7 @@ function FirstSection({ url, refToRef }) {
     );
 }
 
-function SecondSection({ wh }) {
+function SecondSection({ wh, refOne, refTwo }) {
     let widthOne = Math.round((wh[0] / 100) * 41);
     let widthTwo = Math.round((wh[0] / 100) * 33.3);
     let heightTwo = Math.round((widthTwo / 100) * 75);
@@ -226,21 +269,28 @@ function SecondSection({ wh }) {
 
     return (
         <section>
-            <div className={`flex items-center justify-evenly gradiented-div w-full`} style={{height: `${mainHeight}px`}}>
-                <div
-                    className="bg-no-repeat bg-cover bg-center"
-                    style={{
-                        width: `${widthOne}px`,
-                        height: `${widthOne}px`,
-                        backgroundImage: `url('${urlOne}'), url('${bgUrlOne}')`}}
+            <div className={`flex items-center justify-evenly gradiented-div w-full aspect-[100/58]`}>
+                <div ref={refOne}
+                    className="bg-no-repeat bg-cover bg-center w-[41%] aspect-[1/1] bgDivOne"
+                   data-src="https://ableton-production.imgix.net/about/photo-1.jpg?fit=crop"
+                   data-height={`${widthOne}`}
+                   data-width={`${widthOne}`}
+                   /* style={{
+                        backgroundImage: `url('${urlOne}'), url('${bgUrlOne}')`}}*/
                 ></div>
                 <div
-                    className="bg-no-repeat bg-cover bg-center"
+
+                    ref={refTwo}
+                    className="bg-no-repeat bg-cover bg-center w-[33%] aspect-[4/3] bgDivTwo"
+                    
+                    data-src="https://ableton-production.imgix.net/about/photo-2.jpg?fit=crop"
+                    
+                    data-width={`${widthTwo}`}
+                    data-height={`${heightTwo}`}
+                    /*
                     style={{
-                        width: `${widthTwo}px`,
-                        height: `${heightTwo}px`,
                         backgroundImage: `url('${urlTwo}'), url('${bgUrlTwo}')`
-                    }}
+                    }}*/
                 ></div>
             </div>
         </section>
@@ -672,11 +722,11 @@ function SixthSection() {
                 </p>
             </article>
             <div className="gradiented-div-four flex items-center justify-end w-full aspect-[1366/797]">
-                <img
+                <img loading="lazy"
                     src="https://ableton-production.imgix.net/about/photo-6-a.jpg?fit=crop&h=342&ixjsv=1.1.3&w=455"
                     className="object-cover w-[33%] aspect-[456/342] ml-[10%] mr-[14%]"
                 />
-                <img
+                <img loading="lazy"
                     src="https://ableton-production.imgix.net/about/photo-7.jpg?fit=crop&h=569&ixjsv=1.1.3&w=569"
                     className="object-cover w-[42%] aspect-[1/1]"
                 />
@@ -707,7 +757,7 @@ function SeventhSection() {
                 </p>
             </article>
             <div className="bg-[#B1C5FF] w-[84%] aspect-[860/798] xl:aspect-[2/1] xl:flex xl:flex-row xl:items-center mx-auto">
-                <img
+                <img loading="lazy"
                     src="https://ableton-production.imgix.net/about/photo-8.jpg?crop=right&fit=crop&h=238&ixjsv=1.1.3&w=397"
                     className="object-cover w-full aspect-[375/225] xl:w-[50%] xl:aspect-[1/1] xl:inline-block"/>
                 <article className="w-full aspect-[860/282] flex flex-col items-center justify-center xl:w-[50%] xl:aspect-[1/1] xl:inline-flex">
@@ -747,7 +797,7 @@ function FifthSection() {
                 </p>
             </article>
             <div className="w-full flex items-center justify-evenly">
-                <img src="https://ableton-production.imgix.net/about/poster-meet-the-makers.jpg?auto=format&fit=crop&fm=jpg&ixjsv=1.1.3&w=1138" className="aspect-[100/57] w-[83%]" />
+                <img loading="lazy" src="https://ableton-production.imgix.net/about/poster-meet-the-makers.jpg?auto=format&fit=crop&fm=jpg&ixjsv=1.1.3&w=1138" className="aspect-[100/57] w-[83%]" />
             </div>
         </section>
     );
