@@ -127,7 +127,7 @@ function App() {
 
 function FormItem() {
     return (
-        <ul className="my-5">
+        <ul className="my-5 lg:order-[-1]">
             <li className="my-2">
                 <h4 className="text-sm font-semibold">
                     Sign up to our newsletter
@@ -294,9 +294,10 @@ function UltimateFooter({ selec, lang, count, countryName }) {
     const logosList = ["Register Live or Push", "About Ableton", "Jobs"];
 
     return (
-        <footer className="mx-12">
+        <footer className="mx-[6%]">
             <AbletonTextLogoBlack extras="h-8" />
-            <ul>
+            <ul lg:mx-auto>
+                <div className="lg:grid lg:grid-cols-3 lg:gap-4">
                 <FormItem />
                 <Logos names={logosList} />
                 <FooterItem names={eduList} useCase={1} />
@@ -308,13 +309,14 @@ function UltimateFooter({ selec, lang, count, countryName }) {
                     country={count}
                     cname={countryName}
                 />
-                <FooterItemLegal />
+                <FooterItemLegal extraValues="lg:col-span-3"/>
+                </div>
             </ul>
         </footer>
     );
 }
 
-function FooterItemLegal() {
+function FooterItemLegal({extraValues}) {
     const legal = [
         "Contact Us",
         "Press Resources",
@@ -341,9 +343,13 @@ function FooterItemLegal() {
     }
 
     return (
-        <ul className="my-5">
+        <ul className={`my-5 ${extraValues} lg:flex lg:flex-row lg:items-center lg:justify-between lg:my-0`}>
+            <li>
+            <div className="lg:grid lg:grid-cols-6 lg:gap-2">
             {listItems}
-            <li className="mt-12">
+            </div>
+            </li>
+            <li className="mt-12 lg:mt-0">
                 <div className="block">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -700,18 +706,18 @@ function SeventhSection() {
                     as a variety of fun, informal small-group activities.
                 </p>
             </article>
-            <div className="bg-[#B1C5FF] w-[84%] aspect-[860/798] xl:flex-row mx-auto">
+            <div className="bg-[#B1C5FF] w-[84%] aspect-[860/798] xl:aspect-[2/1] xl:flex xl:flex-row xl:items-center mx-auto">
                 <img
                     src="https://ableton-production.imgix.net/about/photo-8.jpg?crop=right&fit=crop&h=238&ixjsv=1.1.3&w=397"
-                    className="object-cover w-full aspect-[375/225]"/>
-                <article className="w-full aspect-[860/282] flex flex-col items-center justify-center">
-                    <div className="w-[78%] aspect-[375/244] md:aspect-[668/110] flex flex-col justify-evenly">
-                    <p className="font-normal text-lg xl:text-3xl">
+                    className="object-cover w-full aspect-[375/225] xl:w-[50%] xl:aspect-[1/1] xl:inline-block"/>
+                <article className="w-full aspect-[860/282] flex flex-col items-center justify-center xl:w-[50%] xl:aspect-[1/1] xl:inline-flex">
+                    <div className="w-[78%] xl:aspect-[1/1] md:aspect-[668/110] flex flex-col justify-center">
+                    <p className="font-normal text-lg xl:text-3xl mb-[1%]">
                         We’re really proud of the work we’ve done so far. But
                         there’s so much more to come. If you’d like to be a part
                         of it, please join us.
                     </p>
-                    <a className="text-[#0000ff] block no-underline font-bold text-lg xl:text-3xl" href="#">
+                    <a className="text-[#0000ff] block no-underline font-bold text-lg xl:text-3xl mt-[1%]" href="#">
                         See latest jobs<span className="font-bold text-sm inline-flex items-center"> &gt;</span>
                     </a>
                     </div>
