@@ -101,7 +101,7 @@ function FooterItemLegal({extraValues}) {
 function CountryDropdown({ cb, language, country, cname }) {
     let classProps = "hover:bg-blue-400";
     return (
-        <div>
+        <div className="my-5">
             <h4>Language and Location</h4>
             <div className="inline-block pl-3 relative text-xs font-bold group bg-slate-300 cursor-pointer min-w-[95px] h-6 leading-6 my-2">
                 {language}
@@ -221,7 +221,7 @@ function Logos({ names }) {
         <ul className="lg:my-5">
             {names.map((item, index) => {
                 return (
-                    <li key={index} className="text-sm my-2">
+                    <li key={index} className="text-sm mb-2">
                         <a href="#" title="meh" className="no-underline">
                             {item}&nbsp;<i className="fas fa-angle-right"></i>
                         </a>
@@ -262,7 +262,7 @@ function Logos({ names }) {
 function FormItem() {
     return (
         <ul className="my-5 lg:order-[-1]">
-            <li className="my-2">
+            <li className="mb-2">
                 <h4 className="text-sm font-semibold">
                     Sign up to our newsletter
                 </h4>
@@ -300,7 +300,7 @@ function NewsLetterForm() {
                 placeholder="Email Address"
                 onChange={formik.handleChange}
                 value={formik.values.email}
-                className="text-sm w-[250px] p-2 h-10 bg-slate-200"
+                className="text-sm min-w-[220px] p-2 h-10 bg-slate-200"
             />
 
             <button

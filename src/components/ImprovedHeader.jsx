@@ -32,7 +32,7 @@ function ImprovedHeader({clicked, menuClicked, moreClicked, moreClickedHandler, 
                 (<i className="fa fa-minus"></i>): 
                 (<i className="fa fa-plus"></i>)}         
                 </button>
-                <RegisterList className="hidden lg:flex lg:flex-row lg:ml-auto lg:mr-1.5 lg:justify-end lg:items-center" colorOne="#0000ff" colorTwo="black"/>
+                <RegisterList className="hidden lg:flex lg:flex-row lg:ml-auto lg:mr-1.5 lg:justify-end lg:items-center" colorOne="text-[#0000ff]" colorTwo="text-black"/>
         	</nav>
                 <nav>
                         <div className={`w-full hidden ${moreClicked ? "lg:block" : "lg:hidden"}`}>
@@ -45,7 +45,7 @@ function ImprovedHeader({clicked, menuClicked, moreClicked, moreClickedHandler, 
   {visibility === "block" && (
     <motion.div initial={{opacity:0.1}} animate={{y:"1053px",opacity:[1]}} exit={{opacity:0.1, y:"-1053px"}} transition={{duration:.5}} className={`w-full bg-[#0000ff] block lg:hidden absolute top-[-1053px]`}>
       <MainlinksList className="flex flex-col flex-wrap pt-0 pl-5" colors={fillColor}/>
-      <RegisterList className="flex flex-col pl-5 flex-wrap" colorOne="#ffffff" colorTwo="#ffffff"/>
+      <RegisterList className="flex flex-col pl-5 flex-wrap" colorOne="text-white" colorTwo="text-white"/>
       <MoreOnList color={fillColor}/>
       <MoreFromAb state={clicked} />
     </motion.div>
@@ -62,8 +62,8 @@ function ImprovedHeader({clicked, menuClicked, moreClicked, moreClickedHandler, 
 
 function RegisterList(props){
         return (<ul className={props.className}>
-               <li className="text-xl lg:text-sm my-3 lg:my-0 lg:mx-1.5"><a href="#" className={`no-underline font-[550] text-[${props.colorOne}]`}>Try live for free</a></li> 
-               <li className="text-sm mb-3 mt-3 lg:my-0 lg:mx-1.5"><a href="#" className={`no-underline font-[550] text-[${props.colorTwo}]`}>Log in or register</a></li>
+               <li className="text-xl lg:text-sm my-3 lg:my-0 lg:mx-1.5"><a href="#" className={`no-underline font-[550] ${props.colorOne}`}>Try live for free</a></li> 
+               <li className="text-sm mb-3 mt-3 lg:my-0 lg:mx-1.5"><a href="#" className={`no-underline font-[550] ${props.colorTwo}`}>Log in or register</a></li>
         </ul>);
 }
 
