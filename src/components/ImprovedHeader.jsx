@@ -12,12 +12,13 @@ function ImprovedHeader({clicked, menuClicked, moreClicked, moreClickedHandler, 
         const visibility = clicked ? ("block"):("hidden");
         const moreVisibility = moreClicked ? ("block"):("hidden");
         const navClassValues = `bg-white/75 z-50 w-full ${(scrollUp && count > 60)?"fixed top-0 left-0" : ""}`;
+        const logoFill = clicked ? ("fill-white"):("fill-black");
 
 	return (
         <header>
         	<nav className={`${bgColor} flex pt-5 pb-3 ${clicked ? "": ("border-b-[#eee] border-solid border-[2px]")} ${moreClicked ? "":("lg:border-b-[#eee] lg:border-solid lg:border-[2px]")} lg:py-5 lg:bg-white`}>
         	    <a href="#" title="Home page link" className="no-underline ml-5 mr-2.5">
-        			<AbletonLogo className={`fill-${fillColor} lg:fill-black`}/>
+        			<AbletonLogo className={`${logoFill} lg:fill-black`}/>
         	    </a>	
         		<button className={`font-semibold text-xl ml-2.5 text-${fillColor} lg:hidden relative group`} onClick={menuClicked}>
                 Menu&nbsp;
